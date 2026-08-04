@@ -8,8 +8,9 @@
 // SETUP (one-time):
 //   1. Install the "HomeyScript" app from the Homey App Store.
 //   2. In TRMNL, add the Homey plugin; copy your plugin-setting UUID.
-//   3. Paste this script into HomeyScript and set PUSH_URL below to:
-//        https://trmnl.com/api/plugin_settings/<YOUR-UUID>/data
+//   3. Paste this script into HomeyScript and set PUSH_URL below to one of:
+//        https://trmnl.com/api/plugin_settings/<YOUR-UUID>/data   (native Homey plugin)
+//        https://trmnl.com/api/custom_plugins/<YOUR-UUID>         (private plugin, webhook strategy)
 //   4. Run it once to test, then add a Flow: "every 5 minutes" -> run this script.
 //
 // The UUID is the secret — no OAuth, no API key. Keep the script private.
@@ -65,10 +66,12 @@ const snapshot = {
   })),
 };
 
+// Top-level keys serve the native endpoint; the merge_variables copy serves the
+// private-plugin endpoint. One body works against either PUSH_URL.
 const res = await fetch(PUSH_URL, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(snapshot),
+  body: JSON.stringify({ ...snapshot, merge_variables: snapshot }),
 });
 
 log(`TRMNL push -> HTTP ${res.status}, ${snapshot.devices.length} devices`);

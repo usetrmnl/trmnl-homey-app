@@ -1,0 +1,22 @@
+{
+  "name": "com.trmnl.companion",
+  "version": "0.1.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "run": "homey app run",
+    "install-dev": "homey app install",
+    "validate": "homey app validate --level debug",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "homey-api": "^3.18.3",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.0",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
+    "@types/node": "^22.0.0",
+    "@types/source-map-support": "^0.5.10"
+  }
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; padding: 16px; max-width: 520px; }
+    label { display: block; margin: 14px 0 4px; font-weight: 600; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    .hint { color: #666; font-size: 13px; margin-top: 4px; }
+    button { margin-top: 12px; padding: 10px 16px; margin-right: 8px; }
+    #status, #push_status { margin-top: 12px; font-size: 14px; }
+    hr { margin: 24px 0; border: none; border-top: 1px solid #ddd; }
+    #diag_status { margin-top: 8px; font-size: 14px; font-weight: 600; }
+    #diag_out { margin-top: 8px; background: #f4f4f4; padding: 10px; font-size: 12px;
+                white-space: pre-wrap; word-break: break-word; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h2>TRMNL push</h2>
+
+  <label for="push_url">TRMNL push URL</label>
+  <input id="push_url" type="url" placeholder="https://your-trmnl-host/…/homey" />
+  <div class="hint">Where to POST your home snapshot — your self-hosted TRMNL / BYOS endpoint or plugin webhook.</div>
+
+  <label for="interval_minutes">Refresh interval (minutes)</label>
+  <input id="interval_minutes" type="number" min="1" max="60" placeholder="5" />
+  <div class="hint">A full snapshot is pushed on this timer, plus immediately whenever a device changes.</div>
+
+  <button id="save">Save</button>
+  <div id="status"></div>
+
+  <hr />
+
+  <h2>Diagnostics</h2>
+  <div class="hint">Checks whether the app is running on your Homey and can reach your devices.</div>
+  <div id="diag_status">Checking…</div>
+  <pre id="diag_out"></pre>
+  <button id="rerun">Re-run check</button>
+  <button id="testpush">Test push now</button>
+  <div id="push_status"></div>
+
+  <script type="text/javascript">
+    function onHomeyReady(Homey) {
+      var url = document.getElementById('push_url');
+      var interval = document.getElementById('interval_minutes');
+      var status = document.getElementById('status');
+      var diagStatus = document.getElementById('diag_status');
+      var diagOut = document.getElementById('diag_out');
+      var pushStatus = document.getElementById('push_status');
+
+      Homey.get('push_url', function (err, value) { if (!err && value) url.value = value; });
+      Homey.get('interval_minutes', function (err, value) { if (!err && value) interval.value = value; });
+
+      document.getElementById('save').addEventListener('click', function () {
+        Homey.set('push_url', url.value, function (err) {
+          if (err) return Homey.alert(err);
+          Homey.set('interval_minutes', Number(interval.value) || 5, function (err2) {
+            if (err2) return Homey.alert(err2);
+            status.textContent = 'Saved.';
+          });
+        });
+      });
+
+      // Probe the app backend on demand. Reaching a handler proves the backend
+      // is alive; an error means the runtime never loaded the app.
+      function runDiag() {
+        diagStatus.textContent = 'Probing app backend…';
+        diagOut.textContent = '';
+        Homey.api('GET', '/diag', null, function (err, result) {
+          if (err) {
+            diagStatus.textContent = '❌ Backend UNREACHABLE — the app runtime never loaded the app.';
+            diagOut.textContent = String(err && err.message ? err.message : err);
+            return;
+          }
+          if (result && result.connectOk) {
+            diagStatus.textContent = '✅ Backend ALIVE — connected to ' + result.deviceCount + ' devices.';
+          } else {
+            diagStatus.textContent = '⚠️ Backend alive, but connecting to the Homey API failed.';
+          }
+          diagOut.textContent = JSON.stringify(result, null, 2);
+        });
+      }
+
+      document.getElementById('rerun').addEventListener('click', runDiag);
+
+      document.getElementById('testpush').addEventListener('click', function () {
+        pushStatus.textContent = 'Pushing to TRMNL…';
+        Homey.api('POST', '/push', {}, function (err, result) {
+          if (err) return (pushStatus.textContent = '❌ ' + (err.message || err));
+          pushStatus.textContent = result && result.ok
+            ? '✅ Pushed ' + result.deviceCount + ' devices to TRMNL.'
+            : '❌ ' + (result && result.error);
+        });
+      });
+
+      Homey.ready();
+      runDiag();
+    }
+  </script>
+</body>
+</html>

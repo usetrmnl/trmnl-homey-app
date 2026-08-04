@@ -1,0 +1,14 @@
+{
+  "0.1.0": {
+    "en": "Initial test release \u2014 pushes Homey energy, climate and home status to a TRMNL e-ink display."
+  },
+  "0.1.1": {
+    "en": "Diagnostics for push reliability."
+  },
+  "0.1.2": {
+    "en": "Diagnostics."
+  },
+  "0.1.3": {
+    "en": "Added an in-app connection test and diagnostics to the app settings."
+  }
+}

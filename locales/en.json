@@ -1,0 +1,7 @@
+{
+  "settings": {
+    "title": "TRMNL push",
+    "push_url": "TRMNL push URL",
+    "interval_minutes": "Refresh interval (minutes)"
+  }
+}

@@ -2,5 +2,3 @@ node_modules/
 .homeybuild/
 env.json
 *.log
-node_modules/
-.homeybuild/

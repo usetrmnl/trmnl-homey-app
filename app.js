@@ -5,7 +5,7 @@ const { buildSnapshot } = require('./lib/snapshot');
 const { pushSnapshot } = require('./lib/pusher');
 const { HomeyAPI } = require('homey-api');
 
-const DEFAULT_INTERVAL_MIN = 1;
+const DEFAULT_INTERVAL_MIN = 5;
 const ON_CHANGE_DEBOUNCE_MS = 3000;
 const INIT_RETRY_MS = 30_000;
 

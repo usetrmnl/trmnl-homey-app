@@ -10,5 +10,8 @@
   },
   "0.1.3": {
     "en": "Added an in-app connection test and diagnostics to the app settings."
+  },
+  "0.1.4": {
+    "en": "Pushes every 5 minutes by default, matching the settings."
   }
 }

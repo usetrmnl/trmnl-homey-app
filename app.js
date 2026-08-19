@@ -80,6 +80,13 @@ module.exports = class TrmnlCompanionApp extends Homey.App {
     }
   }
 
+  // Read the home and return the TRMNL Snapshot (same shape push() sends) — the widget renders this.
+  async getSnapshot() {
+    const api = this.api || (await HomeyAPI.createAppAPI({ homey: this.homey }));
+    const [devices, zones] = await Promise.all([api.devices.getDevices(), api.zones.getZones()]);
+    return buildSnapshot(devices, zones);
+  }
+
   subscribeToChanges() {
     Promise.resolve()
       .then(() => this.api.devices.connect())

@@ -1,0 +1,13 @@
+{
+  "name": {
+    "en": "Home Overview"
+  },
+  "settings": [],
+  "height": 240,
+  "api": {
+    "getSnapshot": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

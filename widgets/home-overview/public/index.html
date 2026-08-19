@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    /* Homey capability colours (from homey-lib) used as accents. */
+    :root {
+      --temp: #FA6400;
+      --humidity: #FFA07A;
+      --power: #6DD400;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", -apple-system, system-ui, sans-serif;
+      color: var(--homey-text-color, #17181a);
+    }
+    .wrap { padding: var(--homey-su-4, 16px); }
+    .head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: var(--homey-su-3, 12px);
+    }
+    .head .title {
+      font-size: var(--homey-font-size-large, 20px);
+      font-weight: var(--homey-font-weight-bold, 700);
+    }
+    .head .sub {
+      font-size: var(--homey-font-size-small, 14px);
+      color: var(--homey-text-color-light, #7b7f85);
+    }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--homey-su-2, 8px); }
+    .stat {
+      border-radius: var(--homey-border-radius-default, 12px);
+      background: var(--homey-color-mono-050, #f5f6f7);
+      padding: var(--homey-su-2, 8px);
+      border-top: 3px solid var(--accent, #999);
+    }
+    .stat .val {
+      display: block;
+      font-size: var(--homey-font-size-xlarge, 24px);
+      font-weight: var(--homey-font-weight-bold, 700);
+      font-variant-numeric: tabular-nums;
+      line-height: var(--homey-line-height-xlarge, 32px);
+    }
+    .stat .lbl {
+      display: block;
+      font-size: var(--homey-font-size-small, 14px);
+      color: var(--homey-text-color-light, #7b7f85);
+    }
+    .devices { margin-top: var(--homey-su-3, 12px); }
+    .device {
+      display: flex; align-items: baseline; gap: var(--homey-su-2, 8px);
+      padding: var(--homey-su-1, 4px) 0;
+      border-top: 1px solid var(--homey-line-color-light, #eaebec);
+      font-size: var(--homey-font-size-small, 14px);
+    }
+    .device .name { font-weight: var(--homey-font-weight-medium, 500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .device .zone { color: var(--homey-text-color-light, #7b7f85); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .device .reading { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .muted { color: var(--homey-text-color-light, #7b7f85); font-size: var(--homey-font-size-small, 14px); }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app"><span class="muted">Loading…</span></div>
+
+  <script type="text/javascript">
+    function onHomeyReady(Homey) {
+      Homey.ready();
+      Homey.api('GET', '/', {})
+        .then(function (snapshot) {
+          render(snapshot);
+          Homey.setHeight(document.body.scrollHeight);
+        })
+        .catch(function (err) {
+          document.getElementById('app').innerHTML =
+            '<span class="muted">' + esc((err && err.message) || 'Could not load the home') + '</span>';
+        });
+    }
+
+    function render(snapshot) {
+      var devices = ((snapshot && snapshot.devices) || []).filter(function (d) { return d.available !== false; });
+      var temps = devices.filter(function (d) { return typeof d.temperature === 'number'; });
+      var hums = devices.filter(function (d) { return typeof d.humidity === 'number'; });
+      var powered = devices.filter(function (d) { return typeof d.power === 'number'; });
+
+      var avgTemp = temps.length ? sum(temps, 'temperature') / temps.length : null;
+      var avgHum = hums.length ? Math.round(sum(hums, 'humidity') / hums.length) : null;
+      var totalPower = Math.round(sum(powered, 'power'));
+
+      var html = '';
+      html += '<div class="head"><span class="title">Home</span>'
+            + '<span class="sub">' + devices.length + ' devices</span></div>';
+      html += '<div class="stats">'
+            + stat('--temp', avgTemp == null ? '—' : round1(avgTemp) + '°', 'Avg temp')
+            + stat('--humidity', avgHum == null ? '—' : avgHum + '%', 'Humidity')
+            + stat('--power', totalPower + ' W', 'Power now')
+            + '</div>';
+
+      var top = powered.slice().sort(function (a, b) { return b.power - a.power; }).slice(0, 5);
+      if (top.length) {
+        html += '<div class="devices">';
+        top.forEach(function (d) {
+          html += '<div class="device">'
+                + '<span class="name">' + esc(d.name) + '</span>'
+                + '<span class="zone">' + esc(d.zone || '') + '</span>'
+                + '<span class="reading">' + reading(d) + '</span>'
+                + '</div>';
+        });
+        html += '</div>';
+      }
+
+      document.getElementById('app').innerHTML = html;
+    }
+
+    function stat(accentVar, value, label) {
+      return '<div class="stat" style="--accent: var(' + accentVar + ')">'
+           + '<span class="val">' + value + '</span>'
+           + '<span class="lbl">' + label + '</span></div>';
+    }
+    function reading(d) {
+      if (typeof d.power === 'number') return Math.round(d.power) + ' W';
+      if (typeof d.temperature === 'number') return round1(d.temperature) + '°';
+      if (d.on === true) return 'On';
+      if (d.on === false) return 'Off';
+      return '';
+    }
+    function sum(list, key) { return list.reduce(function (a, d) { return a + d[key]; }, 0); }
+    function round1(n) { return Math.round(n * 10) / 10; }
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+  </script>
+</body>
+</html>

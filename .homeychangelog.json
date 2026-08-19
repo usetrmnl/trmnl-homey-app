@@ -2,7 +2,7 @@
   "0.2.0": {
     "en": "First release in the Homey App Store. Sends your devices, zones, energy and climate readings to a TRMNL e-ink display \u2014 on a timer and immediately whenever something in the home changes."
   },
-  "0.2.1": {
+  "0.2.2": {
     "en": "Corrected the app icon and store images to the TRMNL brand."
   }
 }

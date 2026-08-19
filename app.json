@@ -1,6 +1,6 @@
 {
   "id": "com.trmnl.companion",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "compatibility": ">=12.0.0",
   "sdk": 3,
   "platforms": [
@@ -15,6 +15,19 @@
   "category": [
     "tools"
   ],
+  "tags": {
+    "en": [
+      "TRMNL",
+      "e-ink",
+      "eink",
+      "e-paper",
+      "display",
+      "dashboard",
+      "screen",
+      "energy",
+      "climate"
+    ]
+  },
   "permissions": [
     "homey:manager:api"
   ],
@@ -35,6 +48,14 @@
     "xlarge": "/assets/images/xlarge.png"
   },
   "author": {
-    "name": "TRMNL"
+    "name": "TRMNL",
+    "email": "support@trmnl.com",
+    "website": "https://trmnl.com"
+  },
+  "homepage": "https://trmnl.com/integrations/homey",
+  "support": "https://help.trmnl.com",
+  "source": "https://github.com/usetrmnl/trmnl-homey-app",
+  "bugs": {
+    "url": "https://github.com/usetrmnl/trmnl-homey-app/issues"
   }
 }

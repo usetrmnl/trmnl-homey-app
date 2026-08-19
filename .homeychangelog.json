@@ -1,17 +1,5 @@
 {
-  "0.1.0": {
-    "en": "Initial test release \u2014 pushes Homey energy, climate and home status to a TRMNL e-ink display."
-  },
-  "0.1.1": {
-    "en": "Diagnostics for push reliability."
-  },
-  "0.1.2": {
-    "en": "Diagnostics."
-  },
-  "0.1.3": {
-    "en": "Added an in-app connection test and diagnostics to the app settings."
-  },
-  "0.1.4": {
-    "en": "Pushes every 5 minutes by default, matching the settings."
+  "0.2.0": {
+    "en": "First release in the Homey App Store. Sends your devices, zones, energy and climate readings to a TRMNL e-ink display — on a timer and immediately whenever something in the home changes."
   }
 }

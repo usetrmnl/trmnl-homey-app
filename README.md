@@ -1,8 +1,5 @@
 # TRMNL companion for Homey
 
-> **Alpha.** Working end-to-end on a real Homey Pro, but not yet in the Homey
-> App Store and still subject to change. Install is via the Homey CLI for now.
-
 A [Homey](https://homey.app) app that pushes a snapshot of your smart home to a
 [TRMNL](https://trmnl.com) e-ink display. It runs on the Homey itself, reads
 devices and zones over the local API, and POSTs to your TRMNL plugin — no
@@ -12,6 +9,9 @@ It pushes on a timer (default every 5 minutes) and immediately when a device
 changes, so the screen follows the home instead of a polling schedule.
 
 ## Install
+
+Search for **TRMNL** in the Homey App Store on your Homey, or install from
+source with the [Homey CLI](https://apps.developer.homey.app/the-basics/getting-started):
 
 ```
 npm install -g homey

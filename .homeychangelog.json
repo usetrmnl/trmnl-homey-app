@@ -4,5 +4,8 @@
   },
   "0.2.2": {
     "en": "Corrected the app icon and store images to the TRMNL brand."
+  },
+  "0.3.0": {
+    "en": "Pushing when a device changes is now a setting, and off by default. A busy home can use up the hourly push allowance in minutes, so it is now opt-in and spaced at least a minute apart."
   }
 }

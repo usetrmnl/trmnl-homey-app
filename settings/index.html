@@ -8,6 +8,9 @@
     label { display: block; margin: 14px 0 4px; font-weight: 600; }
     input { width: 100%; padding: 8px; box-sizing: border-box; }
     .hint { color: #666; font-size: 13px; margin-top: 4px; }
+    .toggle { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 4px; }
+    .toggle input { width: auto; margin: 2px 0 0; flex: none; }
+    .toggle label { margin: 0; font-weight: 600; }
     button { margin-top: 12px; padding: 10px 16px; margin-right: 8px; }
     #status, #push_status { margin-top: 12px; font-size: 14px; }
     hr { margin: 24px 0; border: none; border-top: 1px solid #ddd; }
@@ -20,12 +23,21 @@
   <h2>TRMNL push</h2>
 
   <label for="push_url">TRMNL push URL</label>
-  <input id="push_url" type="url" placeholder="https://your-trmnl-host/…/homey" />
-  <div class="hint">Where to POST your home snapshot — your self-hosted TRMNL / BYOS endpoint or plugin webhook.</div>
+  <input id="push_url" type="url" placeholder="https://trmnl.com/api/plugin_settings/…/data" />
+  <div class="hint">Copy this from the Homey plugin in TRMNL, where it is called the Push URL.
+  Self-hosted and BYOS endpoints work here too. Treat it like a password.</div>
 
   <label for="interval_minutes">Refresh interval (minutes)</label>
   <input id="interval_minutes" type="number" min="1" max="60" placeholder="5" />
-  <div class="hint">A full snapshot is pushed on this timer, plus immediately whenever a device changes.</div>
+  <div class="hint">How often your whole home is sent to TRMNL. Five minutes suits most screens.</div>
+
+  <div class="toggle">
+    <input id="push_on_change" type="checkbox" />
+    <label for="push_on_change">Also push when a device changes</label>
+  </div>
+  <div class="hint">Your screen keeps up with the house instead of waiting for the timer. TRMNL limits
+  how many pushes it accepts each hour, and a busy home can use that up quickly, so pushes are spaced
+  at least a minute apart. Leave this off if your screen stops updating.</div>
 
   <button id="save">Save</button>
   <div id="status"></div>
@@ -44,6 +56,7 @@
     function onHomeyReady(Homey) {
       var url = document.getElementById('push_url');
       var interval = document.getElementById('interval_minutes');
+      var onChange = document.getElementById('push_on_change');
       var status = document.getElementById('status');
       var diagStatus = document.getElementById('diag_status');
       var diagOut = document.getElementById('diag_out');
@@ -51,13 +64,17 @@
 
       Homey.get('push_url', function (err, value) { if (!err && value) url.value = value; });
       Homey.get('interval_minutes', function (err, value) { if (!err && value) interval.value = value; });
+      Homey.get('push_on_change', function (err, value) { if (!err) onChange.checked = value === true; });
 
       document.getElementById('save').addEventListener('click', function () {
         Homey.set('push_url', url.value, function (err) {
           if (err) return Homey.alert(err);
           Homey.set('interval_minutes', Number(interval.value) || 5, function (err2) {
             if (err2) return Homey.alert(err2);
-            status.textContent = 'Saved.';
+            Homey.set('push_on_change', onChange.checked, function (err3) {
+              if (err3) return Homey.alert(err3);
+              status.textContent = 'Saved.';
+            });
           });
         });
       });
@@ -65,18 +82,18 @@
       // Probe the app backend on demand. Reaching a handler proves the backend
       // is alive; an error means the runtime never loaded the app.
       function runDiag() {
-        diagStatus.textContent = 'Probing app backend…';
+        diagStatus.textContent = 'Checking…';
         diagOut.textContent = '';
         Homey.api('GET', '/diag', null, function (err, result) {
           if (err) {
-            diagStatus.textContent = '❌ Backend UNREACHABLE — the app runtime never loaded the app.';
+            diagStatus.textContent = '❌ The app is not running on your Homey.';
             diagOut.textContent = String(err && err.message ? err.message : err);
             return;
           }
           if (result && result.connectOk) {
-            diagStatus.textContent = '✅ Backend ALIVE — connected to ' + result.deviceCount + ' devices.';
+            diagStatus.textContent = '✅ Running, and reading ' + result.deviceCount + ' devices.';
           } else {
-            diagStatus.textContent = '⚠️ Backend alive, but connecting to the Homey API failed.';
+            diagStatus.textContent = '⚠️ Running, but it cannot reach your devices.';
           }
           diagOut.textContent = JSON.stringify(result, null, 2);
         });

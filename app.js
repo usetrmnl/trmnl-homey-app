@@ -7,11 +7,15 @@ const { HomeyAPI } = require('homey-api');
 
 const DEFAULT_INTERVAL_MIN = 5;
 const ON_CHANGE_DEBOUNCE_MS = 3000;
+// TRMNL rate-limits this endpoint per hour, so change-driven pushes are floored:
+// a busy home emits device.update every few seconds and would exhaust the hour's
+// allowance in minutes. The timer and the settings-page test push ignore this.
+const MIN_CHANGE_PUSH_GAP_MS = 60_000;
 const INIT_RETRY_MS = 30_000;
 
 // Runs ON the Homey Pro. Reads the home via the local API (no cloud, no OAuth),
 // normalizes it to the TRMNL Snapshot contract (lib/snapshot.js), and POSTs it to
-// the configured TRMNL URL — on a timer AND (debounced) whenever a device changes.
+// the configured TRMNL URL on a timer, and optionally when a device changes.
 //
 // NOTE: onInit never awaits the HomeyAPI — it wires the timer/settings and hands
 // off to initializeApi() off the await path, which retries every 30s until the
@@ -98,17 +102,19 @@ module.exports = class TrmnlCompanionApp extends Homey.App {
     this.interval = this.homey.setInterval(() => this.push(), this.intervalMinutes() * 60_000);
   }
 
-  // Coalesce bursts of device events into a single push.
+  // Coalesce bursts of device events into a single push. Off unless the user opts in.
   scheduleChangePush() {
+    if (!this.pushOnChange()) return;
     if (this.debounce) this.homey.clearTimeout(this.debounce);
-    this.debounce = this.homey.setTimeout(() => this.push(), ON_CHANGE_DEBOUNCE_MS);
+    this.debounce = this.homey.setTimeout(() => this.push({ respectGap: true }), ON_CHANGE_DEBOUNCE_MS);
   }
 
   // Never throws — logs success or failure.
-  async push() {
+  async push({ respectGap = false } = {}) {
     if (!this.api) return;
     const url = this.homey.settings.get('push_url');
     if (!url) return;
+    if (respectGap && this.lastPushAt && Date.now() - this.lastPushAt < MIN_CHANGE_PUSH_GAP_MS) return;
     try {
       const [devices, zones] = await Promise.all([
         this.api.devices.getDevices(),
@@ -116,6 +122,7 @@ module.exports = class TrmnlCompanionApp extends Homey.App {
       ]);
       const snapshot = buildSnapshot(devices, zones);
       await pushSnapshot(url, snapshot);
+      this.lastPushAt = Date.now();
       this.log(`push OK ${snapshot.devices.length} devices`);
     } catch (err) {
       this.error('push failed:', err.message);
@@ -124,5 +131,9 @@ module.exports = class TrmnlCompanionApp extends Homey.App {
 
   intervalMinutes() {
     return Number(this.homey.settings.get('interval_minutes')) || DEFAULT_INTERVAL_MIN;
+  }
+
+  pushOnChange() {
+    return this.homey.settings.get('push_on_change') === true;
   }
 };

@@ -1,6 +1,6 @@
 {
   "0.2.0": {
-    "en": "First release in the Homey App Store. Sends your devices, zones, energy and climate readings to a TRMNL e-ink display \u2014 on a timer and immediately whenever something in the home changes."
+    "en": "First release in the Homey App Store. Sends your devices, zones, energy and climate readings to a TRMNL e-ink display — on a timer and immediately whenever something in the home changes."
   },
   "0.2.2": {
     "en": "Corrected the app icon and store images to the TRMNL brand."
@@ -10,5 +10,8 @@
   },
   "0.3.1": {
     "en": "Updated the App Store images to a real Homey screen."
+  },
+  "0.4.0": {
+    "en": "Sends every capability your devices report, not just power, temperature and humidity. A TRMNL screen can now show battery levels, air quality, thermostat modes, washer programs and anything else Homey knows about."
   }
 }

@@ -55,8 +55,18 @@ source        "companion"
 zone_names    { zoneId: zone name }
 devices[]     name, zone, klass, available, power (W), temperature (°C),
               humidity (%), wind (km/h), energy (kWh),
-              titles { field: localized label }, on, alarms ["smoke", ...]
+              titles { field: localized label }, on, alarms ["smoke", ...],
+              capabilities { capabilityId: { value, title } }
 ```
+
+`capabilities` carries every capability the device reports, which is what lets a
+screen show a battery level, an air quality reading or a washer program. Only the
+value and Homey's own localized title travel; TRMNL derives the unit, the decimal
+allowance and the render component from the capability id.
+
+The named readings above it are the same numbers a second time, kept so a TRMNL
+that predates the capability bag still renders. They can go once that is long
+deployed.
 
 The same shape the TRMNL Homey plugin's cloud poller produces, so recipes and
 the [trmnl-liquid-components](https://github.com/usetrmnl/trmnl-liquid-components)

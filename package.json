@@ -1,13 +1,14 @@
 {
   "name": "com.trmnl.companion",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "main": "app.js",
   "scripts": {
     "run": "homey app run",
     "install-dev": "homey app install",
     "validate": "homey app validate --level debug",
-    "build": "tsc --noEmit"
+    "build": "tsc --noEmit",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "homey-api": "^3.18.3",

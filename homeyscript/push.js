@@ -43,6 +43,16 @@ const titlesOf = (d) => {
   }
   return titles;
 };
+// Every capability the device reports. Only the value and Homey's localized
+// title travel; TRMNL derives unit, decimals and render component from the id.
+const capsOf = (d) => {
+  const out = {};
+  for (const [id, c] of Object.entries(d.capabilitiesObj || {})) {
+    if (!c) continue;
+    out[id] = c.title ? { value: c.value ?? null, title: c.title } : { value: c.value ?? null };
+  }
+  return out;
+};
 const alarmsOf = (d) =>
   Object.entries(d.capabilitiesObj || {})
     .filter(([n, c]) => n.startsWith('alarm_') && c && c.value === true)
@@ -70,6 +80,7 @@ const snapshot = {
     titles: titlesOf(d),
     on: boo(cap(d, 'onoff')),
     alarms: alarmsOf(d),
+    capabilities: capsOf(d),
   })),
 };
 

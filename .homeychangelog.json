@@ -13,5 +13,8 @@
   },
   "0.4.0": {
     "en": "Sends every capability your devices report, not just power, temperature and humidity. A TRMNL screen can now show battery levels, air quality, thermostat modes, washer programs and anything else Homey knows about."
+  },
+  "0.4.1": {
+    "en": "Updated the App Store images to show every capability with Homey's own glyphs."
   }
 }

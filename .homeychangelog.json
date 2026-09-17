@@ -22,5 +22,8 @@
   },
   "0.4.3": {
     "en": "Added a Flow card that sends your home to TRMNL, and sharper App Store images."
+  },
+  "0.4.4": {
+    "en": "Shortened the App Store description."
   }
 }

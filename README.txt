@@ -1,3 +1,3 @@
-Bring your home's live status to your TRMNL e-ink display. This app reads your Homey's devices, zones and energy data and sends it to your TRMNL screen, so you can see your power usage, indoor climate and what is on or off at a glance, on a calm always-on display instead of reaching for your phone.
+Your Homey knows what's on, how warm each room is and what's drawing power. This app puts that on a TRMNL e-ink screen: always on, glanceable, no phone required.
 
-Set it up once by entering your TRMNL push address in the app settings, and your screen stays up to date on a timer you choose, or whenever a device changes. On the TRMNL side, pick from ready-made Homey screens for energy, climate, home status and zones, or fork any of them and build the layout you want. The screens and this app are both open source.
+Paste your Push URL into the app settings and you're done. The screen updates on a timer you pick, or the moment a device changes. On the TRMNL side, pick a ready-made screen (energy, climate, home status, zones) or fork one and make it yours. The app and the screens are open source.

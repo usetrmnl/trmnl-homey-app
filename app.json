@@ -10,7 +10,7 @@
     "en": "TRMNL"
   },
   "description": {
-    "en": "Push your Homey's energy, climate and home status to a TRMNL e-ink display."
+    "en": "Your home without distractions"
   },
   "category": [
     "tools"
@@ -31,6 +31,19 @@
   "permissions": [
     "homey:manager:api"
   ],
+  "flow": {
+    "actions": [
+      {
+        "id": "send_home",
+        "title": {
+          "en": "Send home to TRMNL"
+        },
+        "hint": {
+          "en": "Sends every device and zone to your TRMNL screen right away. Each run counts against the hourly push allowance."
+        }
+      }
+    ]
+  },
   "api": {
     "diag": {
       "method": "GET",

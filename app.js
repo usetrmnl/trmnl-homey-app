@@ -33,6 +33,11 @@ module.exports = class TrmnlCompanionApp extends Homey.App {
     });
     this.startInterval();
 
+    this.homey.flow.getActionCard('send_home').registerRunListener(async () => {
+      const result = await this.pushNow();
+      if (!result.ok) throw new Error(result.error);
+    });
+
     // Bring up the HomeyAPI OFF the await path so a slow bridge never hangs onInit.
     this.homey.setTimeout(() => this.initializeApi(), 10);
   }

@@ -3,6 +3,3 @@ Bring your home's live status to your TRMNL e-ink display. This app reads your H
 Set it up once by entering your TRMNL push address in the app settings. Your screen then stays up to date automatically on a timer you choose. If you want it to keep up with the house more closely, you can also turn on pushing whenever a device changes.
 
 On the TRMNL side you can pick from ready-made Homey screens for energy, climate, home status and zones, or fork any of them and build the layout you actually want. The screens and this app are both open source.
-
-Setup guide: https://help.trmnl.com/en/articles/16527414-homey
-Source code: https://github.com/usetrmnl/trmnl-homey-app

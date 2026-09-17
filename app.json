@@ -53,7 +53,7 @@
     "website": "https://trmnl.com"
   },
   "homepage": "https://trmnl.com/integrations/homey",
-  "support": "https://help.trmnl.com",
+  "support": "https://help.trmnl.com/en/articles/16527414-homey",
   "source": "https://github.com/usetrmnl/trmnl-homey-app",
   "bugs": {
     "url": "https://github.com/usetrmnl/trmnl-homey-app/issues"

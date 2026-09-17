@@ -16,5 +16,8 @@
   },
   "0.4.1": {
     "en": "Updated the App Store images to show every capability with Homey's own glyphs."
+  },
+  "0.4.2": {
+    "en": "Shortened the App Store description."
   }
 }

@@ -24,6 +24,9 @@
     "en": "Added a Flow card that sends your home to TRMNL, and sharper App Store images."
   },
   "0.4.4": {
-    "en": "Shortened the App Store description and made the app icon visible on its brand color."
+    "en": "Shortened the App Store description."
+  },
+  "0.4.5": {
+    "en": "Made the app icon visible on its brand color."
   }
 }

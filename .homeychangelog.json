@@ -28,5 +28,8 @@
   },
   "0.4.5": {
     "en": "Made the app icon visible on its brand color."
+  },
+  "0.4.6": {
+    "en": "Enlarged the app icon to fill its canvas."
   }
 }
